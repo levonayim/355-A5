@@ -25,34 +25,48 @@ d3.csv('A5-query.csv', function(error, data) {
 
 // DIMENSIONS
 var margin = {top: 30, right: 50, bottom: 50, left: 70},
-	width = 550 - margin.left - margin.right,
-	height = 550 - margin.top - margin.bottom;
+	outerWidth = 550,
+	outerHeight = 550,
+	innerWidth = outerWidth - margin.left - margin.right,
+	innerHeight = outerHeight - margin.top - margin.bottom;
 
 // SCALE RANGE
-var x = d3.scale.linear().range([0, width]);
-var y = d3.scale.linear().range([height, 0]);
+var x = d3.scale
+	.linear()
+	.range([0, width]);
+var y = d3.scale
+	.linear()
+	.range([height, 0]);
 
-// ADD SVG TO BODY
+// SVG
 var svg = d3
 	.select('body')
 	.append('svg')
-	.attr('width', width + margin.left + margin.right)
-	.attr('height', height + margin.top + margin.bottom)
+	.attr('width', outerWidth)
+	.attr('height', outerHeight)
 		.append('g')
 		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-// DEFINES AXIS DETAILS
-var xAxis = d3.svg.axis().scale(x)
-	.orient('bottom').ticks(10);
-var yAxis = d3.svg.axis().scale(y)
-	.orient('left').ticks(10);
+// AXIS
+var xAxis = d3.svg
+	.axis()
+	.scale(x)
+	.orient('bottom')
+	.ticks(10);
+var yAxis = d3.svg
+	.axis()
+	.scale(y)
+	.orient('left')
+	.ticks(10);
 
 
-// group that will contain all of the plots
-	var groups = svg.append('g').attr('transform', 'translate(0)');
+// ??? group that will contain all of the plots
+var groups = svg
+	.append('g')
+	.attr('transform', 'translate(0)');
 
 
-// IMPORTING DATA (CSV FILE) FIRSTTT
+// DATA
 d3.csv('spend30more.csv', function(error, data) {
 	data.forEach(function(d) {
 		d.income = +d.income;
@@ -87,20 +101,22 @@ d3.csv('spend30more.csv', function(error, data) {
 	var mouseOn = function() { 
 		var circle = d3.select(this);
 		//increase size/opacity of bubble
-		circle.transition()
-		.duration(800).style('opacity', 1)
-		.attr('r', 10).ease('elastic');
+		circle
+		.transition()
+		.duration(800)
+		.style('opacity', 1)
+		.attr('r', 10)
+		.ease('elastic');
 
-	// function to move mouseover item to front of SVG stage, when another bubble overlaps it
-	//this snippet was borrowed from http://bl.ocks.org/nsonnad/4481531
+		// function to move mouseover item to front of SVG stage, when another bubble overlaps it
+		// this snippet was borrowed from http://bl.ocks.org/nsonnad/4481531
 		d3.selection.prototype.moveToFront = function() { 
 		  return this.each(function() { 
 			this.parentNode.appendChild(this); 
 		  }); 
 		};
-
-		
 	};
+
 	// mouse out functionality
 	var mouseOff = function() {
 		var circle = d3.select(this);
@@ -186,46 +202,48 @@ d3.csv('spend30less.csv', function(error, data) {
 	};
 });
 
-	// run the mouseon/out functions
-	circles.on('mouseover', mouseOn);
-	circles.on('mouseout', mouseOff);
+
+
+// run the mouseon/out functions
+circles.on('mouseover', mouseOn);
+circles.on('mouseout', mouseOff);
 
 
 //CREATE AXIS
-	// X-AXIS
-	// appends 'g' element to the SVG. g is used to group SVG shapes together
-	svg.append('g')
-		.attr('class', 'x axis')
-		.attr('transform', 'translate(0,' + height + ')')
-		.attr('font-size','9px')
-		.call((xAxis)   
-			.ticks(10) // set details on their ticks on x-axis
-			.tickSubdivide(true)
-			.tickSize(10, 10, 10)
-			.orient('bottom')) 
+// X-AXIS
+// appends 'g' element to the SVG. g is used to group SVG shapes together
+svg.append('g')
+	.attr('class', 'x axis')
+	.attr('transform', 'translate(0,' + height + ')')
+	.attr('font-size','9px')
+	.call((xAxis)   
+		.ticks(10) // set details on their ticks on x-axis
+		.tickSubdivide(true)
+		.tickSize(10, 10, 10)
+		.orient('bottom')) 
 
-		.append('text')
-			.attr('class', 'label')
-			.attr('x', width)
-			.attr('font-size','12px')
-			.attr('y', -8) //how far away the small text should be from the axis line
-			.style('text-anchor', 'end')
-			.style('font-weight', 'bold')
-			.text('Fraction of people');
-			//.text('How much is spent on housing ($)');
-	
-	// Y-AXIS
-	svg.append('g')
-		.attr('class', 'y axis')
-		.call(yAxis)
-		.append('text')
-			.attr('class', 'label')
-			.attr('transform', 'rotate(-90)') //rotate text to y-axis to read
-			.attr('y', 16) //how far away the small text should be from the axis line
-			.style('text-anchor', 'end')
-			.style('font-weight', 'bold')
-			.text('Tenure');
-			//.text('Fraction of the total population spending > 30% on housing');
+	.append('text')
+		.attr('class', 'label')
+		.attr('x', width)
+		.attr('font-size','12px')
+		.attr('y', -8) //how far away the small text should be from the axis line
+		.style('text-anchor', 'end')
+		.style('font-weight', 'bold')
+		.text('Fraction of people');
+		//.text('How much is spent on housing ($)');
+
+// Y-AXIS
+svg.append('g')
+	.attr('class', 'y axis')
+	.call(yAxis)
+	.append('text')
+		.attr('class', 'label')
+		.attr('transform', 'rotate(-90)') //rotate text to y-axis to read
+		.attr('y', 16) //how far away the small text should be from the axis line
+		.style('text-anchor', 'end')
+		.style('font-weight', 'bold')
+		.text('Tenure');
+		//.text('Fraction of the total population spending > 30% on housing');
 
 
 });
