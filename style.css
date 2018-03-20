@@ -1,0 +1,24 @@
+body { font: 12px Arial;}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+circle {
+    fill: green;
+}
+
+h1{
+	text-align: center;
+	padding: 0 100px;
+}
+
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background-color: #eee;
+}
