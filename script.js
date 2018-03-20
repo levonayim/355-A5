@@ -1,21 +1,21 @@
-d3.csv('A5-query.csv', function(error, data) {
-	data.forEach(function(d) {
-		// CONVERT DATA
-		d.name = d.name;
-		d.incomeGroup = d.incomeGroup;
-		d.houseType = d.houseType;
-		d.costIncomeRatio = d.costIncomeRatio;
+// d3.csv('A5-query.csv', function(error, data) {
+// 	data.forEach(function(d) {
+// 		// CONVERT DATA
+// 		d.name = d.name;
+// 		d.incomeGroup = d.incomeGroup;
+// 		d.houseType = d.houseType;
+// 		d.costIncomeRatio = d.costIncomeRatio;
 
-		// NUMBERS
-		d.tenureTotal = +d.tenureTotal;
-		d.tenureOwner = +d.tenureOwner;
-		d.tenureRenter = +d.tenureRenter;
-		d.tenureBand = +d.tenureBand;
-	});
+// 		// NUMBERS
+// 		d.tenureTotal = +d.tenureTotal;
+// 		d.tenureOwner = +d.tenureOwner;
+// 		d.tenureRenter = +d.tenureRenter;
+// 		d.tenureBand = +d.tenureBand;
+// 	});
 
 
 
-});
+// });
 
 
 
@@ -33,10 +33,10 @@ var margin = {top: 30, right: 50, bottom: 50, left: 70},
 // SCALE RANGE
 var x = d3.scale
 	.linear()
-	.range([0, width]);
+	.range([0, innerWidth]);
 var y = d3.scale
 	.linear()
-	.range([height, 0]);
+	.range([innerHeight, 0]);
 
 // SVG
 var svg = d3
@@ -46,19 +46,6 @@ var svg = d3
 	.attr('height', outerHeight)
 		.append('g')
 		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-// AXIS
-var xAxis = d3.svg
-	.axis()
-	.scale(x)
-	.orient('bottom')
-	.ticks(10);
-var yAxis = d3.svg
-	.axis()
-	.scale(y)
-	.orient('left')
-	.ticks(10);
-
 
 // ??? group that will contain all of the plots
 var groups = svg
@@ -84,18 +71,17 @@ d3.csv('spend30more.csv', function(error, data) {
 	console.log(data) 
 
 	// Add the scatterplot
-	var circles =
-	groups.selectAll('dot')
+	var circles = groups
+		.selectAll('dot')
 		.data(data)
-	  .enter().append('circle')
+		.enter()
+		.append('circle')
 		.attr('r', 3) // how big the circles will be
 		.attr('cx', function(d) { return x(+d.fraction); })
 		.attr('cy', function(d) { return y(+d.tenure); })
 		.attr('id', function(d) { return d.GEO_NAME;})
 		.style('fill', function(d) { return 'red'; });
 	
-
-
 //INTERACTIONS
 	// mouse over functionality
 	var mouseOn = function() { 
@@ -127,6 +113,11 @@ d3.csv('spend30more.csv', function(error, data) {
 		.attr('r',3).ease('elastic');
 
 	};
+
+	// CIRCLE INTERACTION
+	circles.on('mouseover', mouseOn);
+	circles.on('mouseout', mouseOff);
+});
 
 // IMPORTING DATA (CSV FILE) SECOND
 //d3.csv('spend30less.csv', function(error, data) {
@@ -164,7 +155,8 @@ d3.csv('spend30less.csv', function(error, data) {
 		var circle = d3.select(this);
 		// var circle2 = d3.select(this);
 		//increase size/opacity of bubble
-		circle.transition()
+		circle
+			.transition()
 			.duration(800).style('opacity', 1)
 			// .style('display','none')
 			.attr('r', 10).ease('elastic');
@@ -173,8 +165,6 @@ d3.csv('spend30less.csv', function(error, data) {
 		//     .duration(800).style('opacity', 1)
 		//     .attr('r', 10).ease('elastic');
 
-
-
 	// function to move mouseover item to front of SVG stage, when another bubble overlaps it
 	//this snippet was borrowed from http://bl.ocks.org/nsonnad/4481531
 		d3.selection.prototype.moveToFront = function() { 
@@ -182,8 +172,6 @@ d3.csv('spend30less.csv', function(error, data) {
 			this.parentNode.appendChild(this); 
 		  }); 
 		};
-
-		
 	};
 	// mouse out functionality
 	var mouseOff = function() {
@@ -203,28 +191,31 @@ d3.csv('spend30less.csv', function(error, data) {
 });
 
 
+// AXIS
+var xAxis = d3.svg
+	.axis()
+	.scale(x)
+	.ticks(10) // set details on their ticks on x-axis
+	.tickSubdivide(true)
+	.tickSize(10, 10, 10)
+	.orient('bottom');
+var yAxis = d3.svg
+	.axis()
+	.scale(y)
+	.orient('left');
 
-// run the mouseon/out functions
-circles.on('mouseover', mouseOn);
-circles.on('mouseout', mouseOff);
-
-
-//CREATE AXIS
 // X-AXIS
 // appends 'g' element to the SVG. g is used to group SVG shapes together
-svg.append('g')
+// can styling be applied via css with classes instead?
+svg
+	.append('g')
 	.attr('class', 'x axis')
-	.attr('transform', 'translate(0,' + height + ')')
+	.attr('transform', 'translate(0,' + innerHeight + ')')
 	.attr('font-size','9px')
-	.call((xAxis)   
-		.ticks(10) // set details on their ticks on x-axis
-		.tickSubdivide(true)
-		.tickSize(10, 10, 10)
-		.orient('bottom')) 
-
-	.append('text')
+	.call(xAxis)  
+		.append('text')
 		.attr('class', 'label')
-		.attr('x', width)
+		.attr('x', innerWidth)
 		.attr('font-size','12px')
 		.attr('y', -8) //how far away the small text should be from the axis line
 		.style('text-anchor', 'end')
@@ -233,7 +224,8 @@ svg.append('g')
 		//.text('How much is spent on housing ($)');
 
 // Y-AXIS
-svg.append('g')
+svg
+	.append('g')
 	.attr('class', 'y axis')
 	.call(yAxis)
 	.append('text')
@@ -244,6 +236,3 @@ svg.append('g')
 		.style('font-weight', 'bold')
 		.text('Tenure');
 		//.text('Fraction of the total population spending > 30% on housing');
-
-
-});
