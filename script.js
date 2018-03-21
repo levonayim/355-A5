@@ -1,10 +1,10 @@
 var fileName = 'A5-query.csv';
 
-function getRow(d) {
-	columnList = {name: d.name, incomeGroup: d.incomeGroup, houseType: d.houseType, costIncomeRatio: d.costIncomeRatio, tenureOwner: d.tenureOwner, tenureRenter: d.tenureRenter, tenureBand: d.tenureBand};
+// function getRow(d) {
+// 	columnList = {name: d.name, incomeGroup: d.incomeGroup, houseType: d.houseType, costIncomeRatio: d.costIncomeRatio, tenureOwner: d.tenureOwner, tenureRenter: d.tenureRenter, tenureBand: d.tenureBand};
 
-	return columnList;
-}
+// 	return columnList;
+// }
 
 function getGroups(data) {
 	var groups = {name: [], incomeGroup: [], houseType: [], costIncomeRatio: []};
@@ -36,9 +36,6 @@ function get30Under(data) {
 
 	return list;
 }
-
-
-// names array, incomeGroups array
 
 function querySelection(data, names, incomeGroups) {
 	var selection = {};
@@ -84,6 +81,26 @@ function querySelection(data, names, incomeGroups) {
 	});
 
 	return selection;
+}
+
+function calcTotals(data, names, incomeGroups) {
+	var matrix = {};
+
+	// INITIALIZE
+	getGroups(data)[houseType].forEach(function(h) {
+		matrix[h] = {tenureOwner: 0, tenureRenter: 0, tenureBand: 0};
+	});
+
+	data.forEach(function(d) {
+		names.forEach(function(n) {
+			incomeGroups.forEach(function(i) {
+				// if there is an entry in data with name in names and incomeGroup in incomeGroups
+				if(!(d.name.indexOf(n) == -1 && d.incomeGroup.indexOf(i) == -1)) {
+					matrix[d.houseType] = {}
+				}
+			});
+		});
+	});
 }
 
 // ALL
