@@ -176,7 +176,7 @@ d3.csv(fileName, function(error, data) {
 			ratioArray.push(ratios[n][i]['ratio']);
 		});
 	});
-	y.domain([0, d3.max(ratioArray)]);
+	y.domain([0, d3.max(data, function(d) { return d.tenure; })]);
 
 
 	Object.keys(ratios).forEach(function(n) {
