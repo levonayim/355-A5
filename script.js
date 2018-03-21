@@ -19,28 +19,10 @@ function getGroups(data) {
 	return groups;
 }
 
-function get30Under(data) {
-	// create 2D associative array
-	var list = {};
-
-	data.forEach(function(d) {
-		if (d.costIncomeRatio = 'Spending less than 30% of income on shelter costs') {
-			// if list['city'] is undefined, set as 0
-			if (typeof list[d.name] === 'undefined') {
-				list[d.name] = 0;
-			}
-			// add all parts to get total
-			list[d.name] += d.tenureOwner + d.tenureRenter + d.tenureBand;
-		}
-	});
-
-	return list;
-}
-
-function querySelection(data, names, incomeGroups) {
+function calcRatios(data, names, incomeGroups) {
+	// INITIALIZE
 	var selection = {};
 
-	// INITIALIZE
 	names.forEach(function(n) {
 		selection[n] = {};
 		incomeGroups.forEach(function(i) {
@@ -84,23 +66,29 @@ function querySelection(data, names, incomeGroups) {
 }
 
 function calcTotals(data, names, incomeGroups) {
+	// INITIALIZE
 	var matrix = {};
 
-	// INITIALIZE
-	getGroups(data)[houseType].forEach(function(h) {
+	getGroups(data)['houseType'].forEach(function(h) {
 		matrix[h] = {tenureOwner: 0, tenureRenter: 0, tenureBand: 0};
 	});
 
+	// MATCH
 	data.forEach(function(d) {
 		names.forEach(function(n) {
 			incomeGroups.forEach(function(i) {
 				// if there is an entry in data with name in names and incomeGroup in incomeGroups
 				if(!(d.name.indexOf(n) == -1 && d.incomeGroup.indexOf(i) == -1)) {
-					matrix[d.houseType] = {}
+					// add to all tenure types
+					matrix[d.houseType]['tenureOwner'] += d.tenureOwner;
+					matrix[d.houseType]['tenureRenter'] += d.tenureRenter;
+					matrix[d.houseType]['tenureBand'] += d.tenureBand;
 				}
 			});
 		});
 	});
+
+	return matrix;
 }
 
 // ALL
@@ -115,31 +103,24 @@ d3.csv(fileName, function(error, data) {
 
 		// NUMBERS
 		// converts to number or 0
-		d.tenureTotal = +d.tenureTotal || 0;
 		d.tenureOwner = +d.tenureOwner || 0;
 		d.tenureRenter = +d.tenureRenter || 0;
 		d.tenureBand = +d.tenureBand || 0;
-
-		// DERIVED
 	});
 
-	// Object.keys(get30Under(data)).forEach(function(d) {
-	// 	console.log(get30Under(data)[d]);
-	// });
+	// var ratios = calcRatios(data, ['Abbotsford - Mission'], ['$10,000 to $19,999']);
 
-	// Object.keys(getGroups(data)).forEach(function(d) {
-	// 	Object.keys(getGroups(data)[d]).forEach(function(e) {
-	// 		console.log(getGroups(data)[d][e]);
+	// Object.keys(ratios).forEach(function(n) {
+	// 	Object.keys(ratios[n]).forEach(function(i) {
+	// 		console.log(n + ', ' + i + ', ' + ratios[n][i]['under30'] + ', ' + ratios[n][i]['total'] + ', ' + ratios[n][i]['ratio']);
 	// 	});
 	// });
 
-	var selection = querySelection(data, ['Abbotsford - Mission'], ['$10,000 to $19,999']);
+	var totals = calcTotals(data, ['Abbotsford - Mission'], ['$10,000 to $19,999']);
 
-	Object.keys(selection).forEach(function(n) {
-		Object.keys(selection[n]).forEach(function(i) {
-			console.log(n + ', ' + i + ', ' + selection[n][i]['under30'] + ', ' + selection[n][i]['total'] + ', ' + selection[n][i]['ratio']);
-		});
-	});
+	Object.keys(totals).forEach(function(h) {
+		console.log(h + ', ' + totals[h]['tenureOwner'] + ', ' + totals[h]['tenureRenter'] + ', ' + totals[h]['tenureBand']);
+	})
 });
 
 // DIMENSIONS
