@@ -19,6 +19,32 @@ function getGroups(data) {
 	return groups;
 }
 
+function iG2Int(data, iG) {
+	if (iG = 'Under $10,000') {
+		return 0;
+	} else if (iG = '$10,000 to $19,999') {
+		return 1;
+	} else if (iG = '$20,000 to $29,999') {
+		return 2;
+	} else if (iG = '$30,000 to $39,999') {
+		return 3;
+	} else if (iG = '$40,000 to $49,999') {
+		return 4;
+	} else if (iG = '$50,000 to $59,999') {
+		return 5;
+	} else if (iG = '$60,000 to $69,999') {
+		return 6;
+	} else if (iG = '$70,000 to $79,999') {
+		return 7;
+	} else if (iG = '$80,000 to $89,999') {
+		return 8;
+	} else if (iG = '$90,000 to $99,999') {
+		return 9;
+	} else if (iG = '$100,000 and over') {
+		return 10;
+	}	
+}
+
 function calcRatios(data, names, incomeGroups) {
 	// INITIALIZE
 	var selection = {};
@@ -109,14 +135,6 @@ var margin = {top: 30, right: 50, bottom: 50, left: 70},
 	innerWidth = outerWidth - margin.left - margin.right,
 	innerHeight = outerHeight - margin.top - margin.bottom;
 
-// SCALE RANGE
-var x = d3.scale
-	.linear()
-	.range([0, innerWidth]);
-var y = d3.scale
-	.linear()
-	.range([innerHeight, 0]);
-
 // SVG
 var svg = d3
 	.select('body')
@@ -168,33 +186,35 @@ d3.csv(fileName, function(error, data) {
 	// });
 
 	// SCALE
-	// ???
-	x.domain(d3.extent(ratioData, function(d) { return d.fraction; }));
-		var ratioArray = [];
-		Object.keys(ratios).forEach(function(n) {
-		Object.keys(ratios[n]).forEach(function(i) {
-			ratioArray.push(ratios[n][i]['ratio']);
-		});
-	});
-	y.domain([0, d3.max(data, function(d) { return d.tenure; })]);
+	var x = d3.scale
+		.linear()
+    	.domain([0, 10])
+    	.range([0, innerWidth]);
 
+	var y = d3.scale
+		.linear()
+    	.domain([0, 1])
+    	.range([innerHeight, 0]);
 
-	Object.keys(ratios).forEach(function(n) {
-		Object.keys(ratios[n]).forEach(function(i) {
-			console.log(n + ', ' + i + ', ' + ratios[n][i]['under30'] + ', ' + ratios[n][i]['total'] + ', ' + ratios[n][i]['ratio']);
-			var circles = groups
-				.selectAll('dot')
-				.append('circle')
-				.attr('r', 3)
-				.attr('cx', x(0))
-				.attr('cy', y(0))
-				.attr('id', n)
-				.style('fill', 'red');
-		});
-	});
+	// Add the scatterplot
+	var circles = groups
 
+		.enter()
+		.append('circle')
+		.attr('r', 3) // how big the circles will be
+		.attr('cx',  x(iG2Int(5)))
+		.attr('cy', y(0.5))
+		.attr('id', 'name')
+		.style('fill', 'red');
 
-
+			// Add the scatterplot
+	// var circles = groups
+	// 	.append('circle')
+	// 	.attr('r', 10) // how big the circles will be
+	// 	.attr('cx', x(5))
+	// 	.attr('cy', y(0.5))
+	// 	.attr('id','name')
+	// 	.style('fill', 'red');
 	
 //INTERACTIONS
 	// mouse over functionality
