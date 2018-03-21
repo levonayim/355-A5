@@ -1,3 +1,130 @@
+var fileName = 'A5-query.csv';
+
+function getRow(d) {
+	columnList = {name: d.name, incomeGroup: d.incomeGroup, houseType: d.houseType, costIncomeRatio: d.costIncomeRatio, tenureOwner: d.tenureOwner, tenureRenter: d.tenureRenter, tenureBand: d.tenureBand};
+
+	return columnList;
+}
+
+function getGroups(data) {
+	var groups = {name: [], incomeGroup: [], houseType: [], costIncomeRatio: []};
+
+	data.forEach(function(d) {
+		if (groups.name.indexOf(d.name) == -1) { groups.name.push(d.name); }
+		if (groups.incomeGroup.indexOf(d.incomeGroup) == -1) { groups.incomeGroup.push(d.incomeGroup); }
+		if (groups.houseType.indexOf(d.houseType) == -1) { groups.houseType.push(d.houseType); }
+		if (groups.costIncomeRatio.indexOf(d.costIncomeRatio) == -1) { groups.costIncomeRatio.push(d.costIncomeRatio); }
+	});
+
+	return groups;
+}
+
+function get30Under(data) {
+	// create 2D associative array
+	var list = {};
+
+	data.forEach(function(d) {
+		if (d.costIncomeRatio = 'Spending less than 30% of income on shelter costs') {
+			// if list['city'] is undefined, set as 0
+			if (typeof list[d.name] === 'undefined') {
+				list[d.name] = 0;
+			}
+			// add all parts to get total
+			list[d.name] += d.tenureOwner + d.tenureRenter + d.tenureBand;
+		}
+	});
+
+	return list;
+}
+
+
+// names array, incomeGroups array
+
+function querySelection(data, names, incomeGroups) {
+	var selection = {};
+
+	// INITIALIZE
+	names.forEach(function(n) {
+		selection[n] = {};
+		incomeGroups.forEach(function(i) {
+			selection[n][i] = {};
+		});
+	});
+
+	// MATCH
+	data.forEach(function(d) {
+		names.forEach(function(n) {
+			incomeGroups.forEach(function(i) {
+				// if there is an entry in data with name in names and incomeGroup in incomeGroups
+				if(!(d.name.indexOf(n) == -1 && d.incomeGroup.indexOf(i) == -1)) {
+					// add to total count
+					if (typeof selection[n][i]['total'] === 'undefined') {
+						selection[n][i]['total'] = 0;
+					}
+					selection[n][i]['total'] += d.tenureOwner + d.tenureRenter + d.tenureBand;
+
+					// if category is under30
+					if (d.costIncomeRatio == 'Spending less than 30% of income on shelter costs') {
+						// add to under30 count
+						if (typeof selection[n][i]['under30'] === 'undefined') {
+							selection[n][i]['under30'] = 0;
+						}
+						selection[n][i]['under30'] += d.tenureOwner + d.tenureRenter + d.tenureBand;
+					}
+				}
+			});
+		});
+	});
+
+	// CALCULATE RATIO
+	Object.keys(selection).forEach(function(n) {
+		Object.keys(selection[n]).forEach(function(i) {
+			selection[n][i]['ratio'] = selection[n][i]['under30'] / selection[n][i]['total'];
+		});
+	});
+
+	return selection;
+}
+
+// ALL
+d3.csv(fileName, function(error, data) {
+	// d is passed by reference here
+	data.forEach(function(d) {
+		// CONVERT DATA
+		d.name = d.name;
+		d.incomeGroup = d.incomeGroup;
+		d.houseType = d.houseType;
+		d.costIncomeRatio = d.costIncomeRatio;
+
+		// NUMBERS
+		// converts to number or 0
+		d.tenureTotal = +d.tenureTotal || 0;
+		d.tenureOwner = +d.tenureOwner || 0;
+		d.tenureRenter = +d.tenureRenter || 0;
+		d.tenureBand = +d.tenureBand || 0;
+
+		// DERIVED
+	});
+
+	// Object.keys(get30Under(data)).forEach(function(d) {
+	// 	console.log(get30Under(data)[d]);
+	// });
+
+	// Object.keys(getGroups(data)).forEach(function(d) {
+	// 	Object.keys(getGroups(data)[d]).forEach(function(e) {
+	// 		console.log(getGroups(data)[d][e]);
+	// 	});
+	// });
+
+	var selection = querySelection(data, ['Abbotsford - Mission'], ['$10,000 to $19,999']);
+
+	Object.keys(selection).forEach(function(n) {
+		Object.keys(selection[n]).forEach(function(i) {
+			console.log(n + ', ' + i + ', ' + selection[n][i]['under30'] + ', ' + selection[n][i]['total'] + ', ' + selection[n][i]['ratio']);
+		});
+	});
+});
+
 // DIMENSIONS
 var margin = {top: 30, right: 50, bottom: 50, left: 70},
 	outerWidth = 550,
@@ -29,9 +156,8 @@ var groups = svg
 
 
 // DATA
-//d3.csv('A5-query.csv', function(error, data) {
+//d3.csv(fileName, function(error, data) {
 d3.csv('spend30more.csv', function(error, data) {
-	if (error) { throw error };
 
 	// old
 	data.forEach(function(d) {
@@ -64,8 +190,7 @@ d3.csv('spend30more.csv', function(error, data) {
 
 	// PRINT IN CONSOLE ALL THE DATA
 	// sort data alphabetically
-	data.sort(function(a, b) { return d3.ascending(a.GEO_NAME, b.GEO_NAME); })
-	console.log(data) 
+	data.sort(function(a, b) { return d3.ascending(a.GEO_NAME, b.GEO_NAME); });
 
 	// Add the scatterplot
 	var circles = groups
