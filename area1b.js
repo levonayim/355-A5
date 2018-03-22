@@ -13,7 +13,7 @@ var xAxis1 = d3.svg.axis().scale(x)
 var yAxis = d3.svg.axis().scale(y)
     .orient("left").ticks(5);
 
-var color = d3.scale.category10();   // set the colour scale
+var color = d3.scale.category20();   // set the colour scale
 
 //** SPECIFIC TO MAKING LINE CHART **
 // Define the line 
@@ -70,5 +70,15 @@ d3.csv("spend30more.csv", function(error, data) {
     linechart.append("g")
         .attr("class", "y axis")
         .call(yAxis);
+
+    //HOVER OVER LINE. SHOW INFO
+    linechart.selectAll("path")
+          .data(data)
+        .append("title")
+        .text(function(d) {
+            return d.tenure + " tenure " + d.fraction + " fraction" + d.income + " income range" + d.GEO_NAME;
+
+          });
+
 
 });
