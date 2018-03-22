@@ -71,7 +71,7 @@ d3.csv("spend30more.csv", function(error, data) {
         .attr("class", "y axis")
         .call(yAxis);
 
-    //HOVER OVER LINE. SHOW INFO
+    //HOVER OVER LINE. SHOW INFO. At the moment shows the "highest" point of all the points for that city.. need to figure out how to show just the points.
     linechart.selectAll("path")
           .data(data)
         .append("title")
