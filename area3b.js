@@ -35,8 +35,10 @@ d3.csv("spend30more.csv", function(error, data) {
         d.tenure = +d.tenure;
     });
 // Scale the range of the data
-x.domain(data.map(function(d) { return d.fraction; }));
-y.domain([0, d3.max(data, function(d) { return d.tenure; })]);
+// x.domain(data.map(function(d) { return d.fraction; }));
+
+    x.domain(d3.extent(data, function(d) { return d.fraction; }));
+    y.domain([0, d3.max(data, function(d) { return d.tenure; })]);
 
 
 //CREATE AXIS

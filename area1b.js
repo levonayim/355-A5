@@ -45,7 +45,7 @@ d3.csv("spend30more.csv", function(error, data) {
     //** SPECIFIC TO MAKING LINE CHART **
     // Nest the entries by symbol
     var dataNest = d3.nest()
-        .key(function(d) {return d.symbol;})
+        .key(function(d) {return d.GEO_NAME;})
         .entries(data);
 
     // Loop through each symbol / key
