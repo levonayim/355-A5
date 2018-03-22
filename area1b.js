@@ -43,12 +43,12 @@ d3.csv("spend30more.csv", function(error, data) {
     y.domain([0, d3.max(data, function(d) { return d.tenure; })]);
 
     //** SPECIFIC TO MAKING LINE CHART **
-    // Nest the entries by symbol
+    // Nest the entries by city (GEO_NAME)
     var dataNest = d3.nest()
         .key(function(d) {return d.GEO_NAME;})
         .entries(data);
 
-    // Loop through each symbol / key
+    // Loop through each GEO_NAME / provide different colour key
     dataNest.forEach(function(d,i) { 
 
         linechart.append("path")
