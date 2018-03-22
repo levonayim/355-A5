@@ -1,23 +1,26 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>A4-First Visualization</title>
-	<link rel="stylesheet" href="style.css"/>
-</head>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>title</title>
+		<!-- Custom CSS styles -->
+		<link href="style.css" rel="stylesheet" type="text/css" >
+	</head>
+	<body>
+		<div class="container">
+			<h2>Title</h2>
+			<div id="area1"> <!-- barchart container -->
+			</div>
+			<div id="area3"> <!-- barchart2 container -->
+			</div>
+		</div> 
+	
+		<!-- JS Libraries -->
+		<!--<script src="d3.js" charset="utf-8"></script>-->
+		<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
 
-<body>
-	<h1>The fraction of the total Population for each major city in Canada who spend more than 30% of their income VS the range amount of their income</h1>
-
-<div id="myBtnContainer">
-  <button class="btn active" onclick="filterSelection('all')"> Show all</button>
-  <button class="btn" onclick="filterSelection('more')"> more</button>
-  <button class="btn" onclick="filterSelection('less')"> Less</button>
-</div>
-
-
-<!-- load the d3.js library -->    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-<script src="script.js"></script>
-
-</body>
+		<!-- Custom JS code -->
+		<script src="linechart.js"></script>
+		<script src="bargraph.js"></script>
+	</body>
 </html>
