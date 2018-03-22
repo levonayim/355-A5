@@ -48,6 +48,8 @@ d3.csv("spend30more.csv", function(error, data) {
         .key(function(d) {return d.GEO_NAME;})
         .entries(data);
 
+        // .entries(data) returns an array that can be used with map or forEach but .object(data) returns a direct object with the values
+
     // Loop through each GEO_NAME / provide different colour key
     dataNest.forEach(function(d,i) { 
 
