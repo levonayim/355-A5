@@ -47,13 +47,10 @@ svg {
 	display: inline-block;
 /*	float: left;*/
 }
-
-/*#footer {
-	clear: both;
-	width: 760px;
-	line-height: 150%;
-	font-size: 12px;
-}*/
+#area3 {
+	display: inline-block;
+/*	float: left;*/
+}
 
 path {
 	stroke: #888;

@@ -17,7 +17,7 @@ var color = d3.scale.category10();   // set the colour scale
 
 //** SPECIFIC TO MAKING LINE CHART **
 // Define the line 
-var priceline = d3.svg.line() 
+var line = d3.svg.line() 
     .x(function(d) { return x(d.fraction); })
     .y(function(d) { return y(d.tenure); });
     
@@ -33,7 +33,7 @@ var linechart = d3.select("#area1")
 // IMPORTING DATA (CSV FILE)
 d3.csv("spend30more.csv", function(error, data) {
     data.forEach(function(d) {
-        d.income = +d.income;
+        d.income = d.income;
         d.fraction = +d.fraction;
         d.tenure = +d.tenure;
     });
@@ -55,7 +55,7 @@ d3.csv("spend30more.csv", function(error, data) {
             .attr("class", "line")
             .style("stroke", function() { // Add the colours dynamically
                 return d.color = color(d.key); })
-            .attr("d", priceline(d.values));
+            .attr("d", line(d.values))
     });
 
 
