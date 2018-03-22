@@ -35,7 +35,7 @@ d3.csv("spend30more.csv", function(error, data) {
         d.tenure = +d.tenure;
     });
 // Scale the range of the data
-x.domain(d3.extent(data, function(d) { return d.fraction; }));
+x.domain(data.map(function(d) { return d.fraction; }));
 y.domain([0, d3.max(data, function(d) { return d.tenure; })]);
 
 
@@ -82,7 +82,7 @@ y.domain([0, d3.max(data, function(d) { return d.tenure; })]);
         .enter().append("rect")
           .style("fill", "steelblue")
           .attr("x", function(d) { return x(d.fraction); })
-          .attr("width",  function(d) { return x(d.fraction); })
+          .attr("width",  1)
           .attr("y", function(d) { return y(d.tenure); })
           .attr("height", function(d) { return y(d.tenure); })
         //WHEN HOVER, SHOWS DETAILS
