@@ -1,25 +1,25 @@
-function iG2Int(iG) {
-    if (iG = 'Under $10,000') {
+function iGToInt(iG) {
+    if (iG == 'Under $10,000') {
         return 0;
-    } else if (iG = '$10,000 to $19,999') {
+    } else if (iG == '$10,000 to $19,999') {
         return 1;
-    } else if (iG = '$20,000 to $29,999') {
+    } else if (iG == '$20,000 to $29,999') {
         return 2;
-    } else if (iG = '$30,000 to $39,999') {
+    } else if (iG == '$30,000 to $39,999') {
         return 3;
-    } else if (iG = '$40,000 to $49,999') {
+    } else if (iG == '$40,000 to $49,999') {
         return 4;
-    } else if (iG = '$50,000 to $59,999') {
+    } else if (iG == '$50,000 to $59,999') {
         return 5;
-    } else if (iG = '$60,000 to $69,999') {
+    } else if (iG == '$60,000 to $69,999') {
         return 6;
-    } else if (iG = '$70,000 to $79,999') {
+    } else if (iG == '$70,000 to $79,999') {
         return 7;
-    } else if (iG = '$80,000 to $89,999') {
+    } else if (iG == '$80,000 to $89,999') {
         return 8;
-    } else if (iG = '$90,000 to $99,999') {
+    } else if (iG == '$90,000 to $99,999') {
         return 9;
-    } else if (iG = '$100,000 and over') {
+    } else if (iG == '$100,000 and over') {
         return 10;
     }   
 }
@@ -101,21 +101,54 @@ d3.csv("A5-query.csv", function(error, data) {
         })
         // supply dataset
         .entries(data);
-   console.log(JSON.stringify(dataNest));
+    
 
-    //** SPECIFIC TO MAKING LINE CHART **
-// Define the line 
-var line = d3.svg.line() 
-    .x(function(d) { return x(iG2Int(d.key)); })
-    .y(function(d) { return y(d.values.percent); });
+    dataNest.forEach(function(d) {
+        d.values.sort(function(x, y) {
+            return d3.ascending(iGToInt(x.key), iGToInt(y.key));
+        });
+    });
+
+    console.log(JSON.stringify(dataNest));
 
     // Scale the range of the data
     // x min to max
-    x.domain(d3.extent(dataNest, function(d) { return iG2Int(d.key); }));
-    // y 0 to max
-    y.domain([0, d3.max(dataNest, function(d) { return d.values.percent; })]);
+    x.domain([
+        // min of
+        d3.min(dataNest, function(d) { 
+            // min of incomeGroup index
+            var n = d3.min(d.values, function(d) {
+                return iGToInt(d.key);
+            });
+            return n; 
+        }),
+        // max of
+        d3.max(dataNest, function(d) { 
+            // max of incomeGroup index
+            var n = d3.max(d.values, function(d) {
+                return iGToInt(d.key);
+            });
+            return n; 
+        })
+    ]);
+
+    y.domain([0, 
+        // max of
+        d3.max(dataNest, function(d) { 
+            // max of incomeGroup percent
+            var n = d3.max(d.values, function(d) {
+                return d.values.percent;
+            });
+            return n; 
+        })
+    ]);
 
 
+    //** SPECIFIC TO MAKING LINE CHART **
+    // Define the line 
+    var line = d3.svg.line() 
+        .x(function(d) { return x(iGToInt(d.key)); })
+        .y(function(d) { return y(d.values.percent); });
 
     //** SPECIFIC TO MAKING LINE CHART **
     // Nest the entries by city (GEO_NAME)
@@ -131,7 +164,7 @@ var line = d3.svg.line()
             .attr("class", "line")
             .style("stroke", function() { // Add the colours dynamically
                 return d.color = color(d.key); })
-            .attr("d", line(d.values))
+            .attr("d", line(d.values));
     });
 
 
